@@ -1,15 +1,16 @@
 const fs = require('fs-extra');
 const path = require('path');
-const libre = require('libreoffice-convert');
+const libreOfficeConverter = require('./libreOfficeConverter'); 
 const { promisify } = require('util');
-
-// Promisify the libreoffice-convert function
-const libreConvertAsync = promisify(libre.convert);
 
 /**
  * Document converter using LibreOffice
  */
 class DocumentConverter {
+  constructor() {
+    this.binaryPath = 'libreoffice';
+  }
+
   /**
    * Convert a document file to PDF
    * @param {Object} file - File object with metadata
@@ -21,13 +22,13 @@ class DocumentConverter {
       // Read the input file
       const inputBuffer = await fs.readFile(file.fullPath);
 
-      // Convert to PDF using LibreOffice
-      const pdfBuffer = await libreConvertAsync(inputBuffer, '.pdf', undefined);
+      // Convert to PDF using custom LibreOffice converter
+      const pdfBuffer = await libreOfficeConverter.convert(inputBuffer, 'pdf', file.name, this.binaryPath);
 
       // Generate output file path
       const outputFileName = `${file.baseName}.pdf`;
       const outputPath = path.join(outputDir, outputFileName);
-
+      
       // Write the PDF file
       await fs.writeFile(outputPath, pdfBuffer);
 
@@ -56,13 +57,20 @@ class DocumentConverter {
     const execPromise = promisify(exec);
 
     try {
-      const { stdout } = await execPromise('which libreoffice || where libreoffice');
+      // Check for libreoffice or soffice
+      // Try to find the binary path
+      const { stdout } = await execPromise('which libreoffice || which soffice || where libreoffice || where soffice');
       const libreOfficePath = stdout.trim();
       
-      return {
-        isAvailable: true,
-        path: libreOfficePath
-      };
+      if (libreOfficePath) {
+        this.binaryPath = libreOfficePath;
+        return {
+          isAvailable: true,
+          path: libreOfficePath
+        };
+      } else {
+         throw new Error('Not found');
+      }
     } catch (error) {
       return {
         isAvailable: false,
@@ -73,3 +81,4 @@ class DocumentConverter {
 }
 
 module.exports = new DocumentConverter();
+

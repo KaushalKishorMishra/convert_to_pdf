@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node index.js",
-    "check-libreoffice": "which libreoffice || echo 'LibreOffice not found. Please install it first.'"
+    "check-env": "node scripts/check-env.js"
   },
   "keywords": [
     "pdf",
@@ -18,9 +18,8 @@
   "author": "",
   "license": "MIT",
   "dependencies": {
-    "libreoffice-convert": "^1.6.0",
-    "fs-extra": "^11.2.0",
-    "chalk": "^4.1.2"
+    "chalk": "^4.1.2",
+    "fs-extra": "^11.2.0"
   },
   "engines": {
     "node": ">=14.0.0"
