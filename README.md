@@ -11,7 +11,7 @@ A Node.js application that converts Office documents (.doc, .docx, .ppt, .pptx) 
 - Colored console output for better readability
 - Robust error handling
 
-## Prerequisites
+## Prerequisites (Manual Setup)
 
 ### LibreOffice Installation
 
@@ -51,12 +51,31 @@ Requires Node.js version 14.0.0 or higher.
 
 ## Installation
 
-1. Clone or download this repository
+### Automated Installation (Recommended for Linux/macOS)
 
-2. Install npm dependencies:
+Run the included install script to automatically set up Node.js, LibreOffice, and project dependencies:
+
+```bash
+./scripts/install.sh
+```
+
+### Manual Installation
+
+1. Install Prerequisites (Node.js and LibreOffice) as detailed below.
+
+2. Clone or download this repository
+
+3. Install npm dependencies:
 ```bash
 npm install
 ```
+
+4. Verify your environment:
+```bash
+npm run check-env
+```
+
+## Prerequisites (Manual Setup)
 
 ## Usage
 
@@ -170,7 +189,7 @@ chmod -R 755 data/
 
 ## Dependencies
 
-- **libreoffice-convert** - Wrapper for LibreOffice conversion
+- **libreoffice** - System dependency (LibreOffice suite)
 - **fs-extra** - Enhanced file system operations
 - **chalk** - Colored terminal output
 
