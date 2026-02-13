@@ -61,12 +61,12 @@ install_dependencies() {
                 log_info "Node.js is already installed ($(node -v))."
             fi
 
-            # Check/Install LibreOffice
-            if ! command -v libreoffice &> /dev/null && ! command -v soffice &> /dev/null; then
-                log_info "Installing LibreOffice..."
-                $SUDO apt-get install -y libreoffice-core libreoffice-common libreoffice-headless libreoffice-writer libreoffice-impress
+            # Check/Install unoconv
+            if ! command -v unoconv &> /dev/null; then
+                log_info "Installing unoconv..."
+                $SUDO apt-get install -y unoconv
             else
-                log_info "LibreOffice is already installed."
+                log_info "unoconv is already installed."
             fi
             ;;
         
@@ -89,12 +89,12 @@ install_dependencies() {
                 log_info "Node.js is already installed ($(node -v))."
             fi
 
-            # Check/Install LibreOffice
-            if ! command -v libreoffice &> /dev/null && ! command -v soffice &> /dev/null; then
-                log_info "Installing LibreOffice..."
-                $SUDO $PKG_MGR install -y libreoffice-headless libreoffice-writer libreoffice-impress
+            # Check/Install unoconv
+            if ! command -v unoconv &> /dev/null; then
+                log_info "Installing unoconv..."
+                $SUDO $PKG_MGR install -y unoconv
             else
-                log_info "LibreOffice is already installed."
+                log_info "unoconv is already installed."
             fi
             ;;
 
@@ -110,12 +110,12 @@ install_dependencies() {
                  log_info "Node.js is already installed ($(node -v))."
              fi
              
-             # Check/Install LibreOffice
-             if ! command -v libreoffice &> /dev/null && ! command -v soffice &> /dev/null; then
-                 log_info "Installing LibreOffice..."
-                 $SUDO pacman -S --noconfirm libreoffice-fresh
+             # Check/Install unoconv
+             if ! command -v unoconv &> /dev/null; then
+                 log_info "Installing unoconv..."
+                 $SUDO pacman -S --noconfirm unoconv
              else
-                 log_info "LibreOffice is already installed."
+                 log_info "unoconv is already installed."
              fi
              ;;
              
@@ -133,18 +133,18 @@ install_dependencies() {
                 log_info "Node.js is already installed ($(node -v))."
             fi
 
-            # Check/Install LibreOffice
-            if ! command -v libreoffice &> /dev/null && ! command -v soffice &> /dev/null; then
-                log_info "Installing LibreOffice..."
-                brew install --cask libreoffice
+            # Check/Install unoconv
+            if ! command -v unoconv &> /dev/null; then
+                log_info "Installing unoconv..."
+                brew install unoconv
             else
-                 log_info "LibreOffice is already installed."
+                 log_info "unoconv is already installed."
             fi
             ;;
 
         *)
             log_warn "Unsupported or unknown operating system: $OS."
-            log_warn "Please ensure Node.js (v14+) and LibreOffice are installed manually."
+            log_warn "Please ensure Node.js (v14+) and unoconv are installed manually."
             ;;
     esac
 }

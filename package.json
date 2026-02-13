@@ -6,7 +6,8 @@
   "scripts": {
     "start": "node index.js",
     "check-env": "node scripts/check-env.js",
-    "setup": "./scripts/install.sh"
+    "setup": "./scripts/install.sh",
+    "cleanup-libreoffice": "./scripts/cleanup-libreoffice.sh"
   },
   "keywords": [
     "pdf",

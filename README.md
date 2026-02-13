@@ -1,6 +1,6 @@
 # Office Document to PDF Converter
 
-A Node.js application that converts Office documents (.doc, .docx, .ppt, .pptx) to PDF format using LibreOffice.
+A Node.js application that converts Office documents (.doc, .docx, .ppt, .pptx) to PDF format using unoconv.
 
 ## Features
 
@@ -13,37 +13,33 @@ A Node.js application that converts Office documents (.doc, .docx, .ppt, .pptx) 
 
 ## Prerequisites (Manual Setup)
 
-### LibreOffice Installation
+### unoconv Installation
 
-This application requires LibreOffice to be installed on your system. The `-headless` packages are recommended for server environments.
+This application requires unoconv to be installed on your system. unoconv uses LibreOffice to perform the conversions.
 
 #### Debian/Ubuntu
 ```bash
-sudo apt install libreoffice-core libreoffice-common libreoffice-headless
+sudo apt install unoconv
 ```
 
 #### Arch Linux
 ```bash
-sudo pacman -S libreoffice-fresh libreoffice-fresh-headless
+sudo pacman -S unoconv
 ```
 
 #### Fedora/RHEL/CentOS
 ```bash
-sudo yum install libreoffice
+sudo yum install unoconv
 ```
 or
 ```bash
-sudo dnf install libreoffice
+sudo dnf install unoconv
 ```
 
 #### macOS
 ```bash
-brew install libreoffice
+brew install unoconv
 ```
-Or download the installer from [libreoffice.org](https://www.libreoffice.org/download/download/)
-
-#### Windows
-Download and install from [libreoffice.org](https://www.libreoffice.org/download/download/)
 
 ### Node.js
 
@@ -93,7 +89,7 @@ npm start
 ```
 convert-to-pdf/
 ├── converters/
-│   └── documentConverter.js    # LibreOffice conversion logic
+│   └── documentConverter.js    # unoconv conversion logic
 ├── utils/
 │   ├── fileScanner.js          # File scanning utilities
 │   └── logger.js               # Colored console logging
@@ -116,9 +112,9 @@ convert-to-pdf/
 
 ## How It Works
 
-1. **Checks** if LibreOffice is installed on your system
+1. **Checks** if unoconv is installed on your system
 2. **Scans** the `data/input/` directory for supported file formats
-3. **Converts** each file to PDF using LibreOffice in headless mode
+3. **Converts** each file to PDF using unoconv
 4. **Saves** the PDF files to `data/output/` with the same filename
 5. **Keeps** original files in place (does not delete them)
 
@@ -127,8 +123,8 @@ convert-to-pdf/
 ```
 📄 Office Document to PDF Converter
 
-ℹ Checking LibreOffice installation...
-✓ LibreOffice found at: /usr/bin/libreoffice
+ℹ Checking unoconv installation...
+✓ unoconv found at: /usr/bin/unoconv
 
 ℹ Scanning input directory...
 ✓ Found 3 files to convert
@@ -150,15 +146,15 @@ Summary:
 
 ## Troubleshooting
 
-### LibreOffice Not Found
+### unoconv Not Found
 
-If you get an error about LibreOffice not being found:
+If you get an error about unoconv not being found:
 
-1. Make sure LibreOffice is installed (see installation instructions above)
+1. Make sure unoconv is installed (see installation instructions above)
 2. Verify it's in your system PATH by running:
    ```bash
-   which libreoffice    # Linux/macOS
-   where libreoffice    # Windows
+   which unoconv    # Linux/macOS
+   where unoconv    # Windows
    ```
 3. Restart your terminal/command prompt after installation
 
@@ -189,7 +185,7 @@ chmod -R 755 data/
 
 ## Dependencies
 
-- **libreoffice** - System dependency (LibreOffice suite)
+- **unoconv** - System dependency
 - **fs-extra** - Enhanced file system operations
 - **chalk** - Colored terminal output
 

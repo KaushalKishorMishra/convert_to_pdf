@@ -38,21 +38,20 @@ async function checkNodeVersion() {
     return true;
 }
 
-async function checkLibreOffice() {
-    log('Checking LibreOffice installation...');
+async function checkUnoconv() {
+    log('Checking unoconv installation...');
     try {
-        const { stdout } = await execPromise('which libreoffice || which soffice || where libreoffice || where soffice');
-        const librePath = stdout.trim();
-        if (librePath) {
-            log(`✓ LibreOffice found at: ${librePath}`, 'success');
+        const { stdout } = await execPromise('which unoconv || where unoconv');
+        const unoconvPath = stdout.trim();
+        if (unoconvPath) {
+            log(`✓ unoconv found at: ${unoconvPath}`, 'success');
             return true;
         }
     } catch (e) {
-        // Fallback for Windows if 'where' fails or returns nothing useful in a way we didn't catch
     }
     
-    log('Error: LibreOffice (soffice) not found in PATH.', 'error');
-    log('Please install LibreOffice and ensure it is in your system PATH.', 'warning');
+    log('Error: unoconv not found in PATH.', 'error');
+    log('Please install unoconv and ensure it is in your system PATH.', 'warning');
     return false;
 }
 
@@ -74,7 +73,7 @@ async function main() {
     let allChecksPassed = true;
 
     if (!await checkNodeVersion()) allChecksPassed = false;
-    if (!await checkLibreOffice()) allChecksPassed = false;
+    if (!await checkUnoconv()) allChecksPassed = false;
 
     // Check project directories
     const inputDir = path.join(__dirname, '..', 'data', 'input');

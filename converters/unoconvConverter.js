@@ -6,21 +6,21 @@ const os = require('os');
 
 const execPromise = util.promisify(exec);
 
-class LibreOfficeConverter {
+class UnoconvConverter {
   /**
-   * Convert a document buffer to PDF
+   * Convert a document buffer to PDF using unoconv
    * @param {Buffer} inputBuffer - The input document buffer
    * @param {string} format - The target format (e.g., 'pdf')
    * @param {string} fileName - Original filename (optional, to preserve extension)
-   * @param {string} binaryPath - Path to LibreOffice binary (default: 'libreoffice')
+   * @param {string} binaryPath - Path to unoconv binary (default: 'unoconv')
    * @returns {Promise<Buffer>} The converted file buffer
    */
-  async convert(inputBuffer, format, fileName = 'document.docx', binaryPath = 'libreoffice') {
+  async convert(inputBuffer, format, fileName = 'document.docx', binaryPath = 'unoconv') {
     let tempDir = null;
 
     try {
       // Create a temporary directory
-      tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'libreoffice-'));
+      tempDir = await fs.mkdtemp(path.join(os.tmpdir(), 'unoconv-'));
       
       // Determine input file path
       const inputPath = path.join(tempDir, fileName);
@@ -28,28 +28,21 @@ class LibreOfficeConverter {
       // Write input buffer to file
       await fs.writeFile(inputPath, inputBuffer);
       
-      // Determine output directory (same as input for simplicity)
-      const outputDir = tempDir;
+      // Determine output file path
+      const baseName = path.basename(fileName, path.extname(fileName));
+      const outputFileName = `${baseName}.${format}`;
+      const outputPath = path.join(tempDir, outputFileName);
       
       // Construct command
-      // We use --outdir to specify where the output file should go
-      const command = `"${binaryPath}" --headless --convert-to ${format} --outdir "${outputDir}" "${inputPath}"`;
+      // unoconv -f format -o output_path input_path
+      const command = `"${binaryPath}" -f ${format} -o "${outputPath}" "${inputPath}"`;
       
       // Execute command
       try {
         await execPromise(command);
-        // Note: libreoffice often prints to stderr even on success, so we don't treat stderr as fatal
       } catch (error) {
-        // If the command fails strictly (exit code != 0), we throw
-        throw new Error(`LibreOffice command failed: ${error.message}`);
+        throw new Error(`unoconv command failed: ${error.message}`);
       }
-      
-      // Determine output file path
-      // LibreOffice replaces the extension with the new format
-      const inputExt = path.extname(fileName);
-      const baseName = path.basename(fileName, inputExt);
-      const outputFileName = `${baseName}.${format}`;
-      const outputPath = path.join(outputDir, outputFileName);
       
       // Check if output file exists
       if (!await fs.pathExists(outputPath)) {
@@ -70,4 +63,4 @@ class LibreOfficeConverter {
   }
 }
 
-module.exports = new LibreOfficeConverter();
+module.exports = new UnoconvConverter();

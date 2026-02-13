@@ -6,7 +6,7 @@ This guide details how to set up the Office Document to PDF Converter on a Linux
 
 - **Operating System**: Linux (Ubuntu, Debian, CentOS, RHEL, or similar)
 - **Node.js**: Version 14.0.0 or higher
-- **LibreOffice**: Headless version recommended for servers
+- **unoconv**: Used as a wrapper for LibreOffice conversion
 
 ## 1. System Dependencies Installation
 
@@ -46,25 +46,23 @@ node -v
 npm -v
 ```
 
-### Install LibreOffice
+### Install unoconv
 
-This application relies on LibreOffice for document conversion. On a server, you typically want the headless version to avoid installing X11 dependencies.
+This application relies on `unoconv` for document conversion, which in turn uses LibreOffice.
 
 **Ubuntu/Debian:**
 ```bash
-sudo apt install -y libreoffice-core libreoffice-common libreoffice-headless libreoffice-writer libreoffice-impress
+sudo apt install -y unoconv
 ```
 
 **CentOS/RHEL:**
 ```bash
-sudo yum install -y libreoffice-headless libreoffice-writer libreoffice-impress
+sudo yum install -y unoconv
 ```
 
-Verify LibreOffice installation:
+Verify unoconv installation:
 ```bash
-libreoffice --version
-# OR
-soffice --version
+unoconv --version
 ```
 
 ## 2. Application Setup
@@ -91,7 +89,7 @@ npm install --production
 
 Before running the application, run the included validation script to ensure your environment is correctly configured. This checks for:
 - Node.js version compatibility
-- LibreOffice availability in system PATH
+- unoconv availability in system PATH
 - Write permissions for input/output directories
 
 ```bash
@@ -129,12 +127,22 @@ To run the converter periodically (e.g., every 5 minutes) to process new files:
     */5 * * * * cd /opt/convert-to-pdf && npm start >> /var/log/pdf-converter.log 2>&1
     ```
 
-## 5. Troubleshooting
+## 5. Cleaning Up Old Implementation
 
--   **"LibreOffice not found"**: Ensure `libreoffice` or `soffice` is in your global `PATH`. You can check this with `which libreoffice`.
+If you previously had the standalone LibreOffice implementation and want to remove the specific headless packages that are no longer directly used:
+
+```bash
+npm run cleanup-libreoffice
+```
+
+**Warning**: `unoconv` requires LibreOffice components. Use this script only if you are sure your system has the necessary dependencies for `unoconv` or if you are doing a full system cleanup.
+
+## 6. Troubleshooting
+
+-   **"unoconv not found"**: Ensure `unoconv` is in your global `PATH`. You can check this with `which unoconv`.
 -   **Permission Denied**: Ensure the user running the script has read/write permissions for `data/input` and `data/output`.
     ```bash
     sudo chown -R $USER:$USER data/
     chmod -R 755 data/
     ```
--   **Timeout / Hangs**: Large files may take time. Ensure your server has sufficient RAM (at least 2GB recommended for LibreOffice operations).
+-   **Timeout / Hangs**: Large files may take time. Ensure your server has sufficient RAM (at least 2GB recommended for conversion operations).

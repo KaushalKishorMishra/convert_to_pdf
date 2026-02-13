@@ -16,34 +16,28 @@ async function main() {
     logger.header('📄 Office Document to PDF Converter');
     logger.log('');
 
-    // Step 1: Check LibreOffice installation
-    logger.info('Checking LibreOffice installation...');
-    const libreOfficeCheck = await documentConverter.checkLibreOfficeInstallation();
+    // Step 1: Check unoconv installation
+    logger.info('Checking unoconv installation...');
+    const unoconvCheck = await documentConverter.checkInstallation();
     
-    if (!libreOfficeCheck.isAvailable) {
-      logger.error('LibreOffice is not installed or not found in PATH');
+    if (!unoconvCheck.isAvailable) {
+      logger.error('unoconv is not installed or not found in PATH');
       logger.log('');
-      logger.warning('Please install LibreOffice first:');
+      logger.warning('Please install unoconv first:');
       logger.log('');
-      logger.log('  Debian/Ubuntu:');
-      logger.log('    sudo apt install libreoffice-core libreoffice-common libreoffice-headless');
+      logger.log('  Debian/Ubuntu/CentOS/RHEL:');
+      logger.log('    sudo apt/yum install unoconv');
       logger.log('');
       logger.log('  Arch Linux:');
-      logger.log('    sudo pacman -S libreoffice-fresh libreoffice-fresh-headless');
-      logger.log('');
-      logger.log('  Fedora/RHEL/CentOS:');
-      logger.log('    sudo yum install libreoffice');
+      logger.log('    sudo pacman -S unoconv');
       logger.log('');
       logger.log('  macOS:');
-      logger.log('    brew install libreoffice');
-      logger.log('');
-      logger.log('  Windows:');
-      logger.log('    Download from https://www.libreoffice.org/download/download/');
+      logger.log('    brew install unoconv');
       logger.log('');
       process.exit(1);
     }
 
-    logger.success(`LibreOffice found at: ${libreOfficeCheck.path}`);
+    logger.success(`unoconv found at: ${unoconvCheck.path}`);
     logger.log('');
 
     // Step 2: Ensure directories exist

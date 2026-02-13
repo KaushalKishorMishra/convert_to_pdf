@@ -1,14 +1,14 @@
 const fs = require('fs-extra');
 const path = require('path');
-const libreOfficeConverter = require('./libreOfficeConverter'); 
+const unoconvConverter = require('./unoconvConverter'); 
 const { promisify } = require('util');
 
 /**
- * Document converter using LibreOffice
+ * Document converter using unoconv
  */
 class DocumentConverter {
   constructor() {
-    this.binaryPath = 'libreoffice';
+    this.binaryPath = 'unoconv';
   }
 
   /**
@@ -22,8 +22,8 @@ class DocumentConverter {
       // Read the input file
       const inputBuffer = await fs.readFile(file.fullPath);
 
-      // Convert to PDF using custom LibreOffice converter
-      const pdfBuffer = await libreOfficeConverter.convert(inputBuffer, 'pdf', file.name, this.binaryPath);
+      // Convert to PDF using unoconv converter
+      const pdfBuffer = await unoconvConverter.convert(inputBuffer, 'pdf', file.name, this.binaryPath);
 
       // Generate output file path
       const outputFileName = `${file.baseName}.pdf`;
@@ -49,24 +49,23 @@ class DocumentConverter {
   }
 
   /**
-   * Check if LibreOffice is available
+   * Check if unoconv is available
    * @returns {Promise<Object>} Object with isAvailable boolean and path/error message
    */
-  async checkLibreOfficeInstallation() {
+  async checkInstallation() {
     const { exec } = require('child_process');
     const execPromise = promisify(exec);
 
     try {
-      // Check for libreoffice or soffice
-      // Try to find the binary path
-      const { stdout } = await execPromise('which libreoffice || which soffice || where libreoffice || where soffice');
-      const libreOfficePath = stdout.trim();
+      // Check for unoconv
+      const { stdout } = await execPromise('which unoconv || where unoconv');
+      const unoconvPath = stdout.trim();
       
-      if (libreOfficePath) {
-        this.binaryPath = libreOfficePath;
+      if (unoconvPath) {
+        this.binaryPath = unoconvPath;
         return {
           isAvailable: true,
-          path: libreOfficePath
+          path: unoconvPath
         };
       } else {
          throw new Error('Not found');
@@ -74,7 +73,7 @@ class DocumentConverter {
     } catch (error) {
       return {
         isAvailable: false,
-        error: 'LibreOffice not found in system PATH'
+        error: 'unoconv not found in system PATH'
       };
     }
   }
