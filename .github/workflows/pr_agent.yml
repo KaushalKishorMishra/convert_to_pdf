@@ -13,7 +13,7 @@ jobs:
       contents: write
     steps:
       - name: PR Agent Action
-        uses: qodo-ai/pr-agent@main
+        uses: qodo-ai/pr-agent@main 
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           # Modle Configuration
