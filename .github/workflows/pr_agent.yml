@@ -12,7 +12,6 @@ jobs:
     permissions:
       issues: write
       pull-requests: write
-      contents: write
     steps:
       - name: Check for GEMINI_API_KEY
         run: |
@@ -21,14 +20,14 @@ jobs:
             exit 1
           fi
       - name: PR Agent Action
-        uses: qodo-ai/pr-agent@main
+        uses: qodo-ai/pr-agent@2f9f52f0754a08333292ab01d18aa687e03508f2
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          # Modle Configuration
+          # Model Configuration
           config.model: "gemini/gemini-1.5-flash"
           config.fallback_models: '["gemini/gemini-1.5-flash"]'
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{secrets.GEMINI_API_KEY}}
-          # Automatino Settings
+          # Automation Settings
           github_action_config.auto_review: "true"
           github_action_config.auto_describe: "true"
           github_action_config.auto_improve: "true"
