@@ -3,24 +3,31 @@ on:
   pull_request:
     types: [opened, reopened, ready_for_review]
   issue_comment:
+    types: [created]
 jobs:
   pr_agent_job:
     if: ${{ github.event.sender.type != 'Bot'}}
     runs-on: ubuntu-latest
+    timeout-minutes: 60
     permissions:
       issues: write
       pull-requests: write
-      contents: write
     steps:
+      - name: Check for GEMINI_API_KEY
+        run: |
+          if [ -z "${{ secrets.GEMINI_API_KEY }}" ]; then
+            echo "::error::GEMINI_API_KEY secret is not found. PR Review cannot proceed."
+            exit 1
+          fi
       - name: PR Agent Action
-        uses: qodo-ai/pr-agent@main
+        uses: qodo-ai/pr-agent@2f9f52f0754a08333292ab01d18aa687e03508f2
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-          # Modle Configuration
-          config.model: "gemini/gemini-3-flash-preview"
-          config.fallback_modes: '["gemini/gemini-1.5-flash"]'
+          # Model Configuration
+          config.model: "gemini/gemini-1.5-flash"
+          config.fallback_models: '["gemini/gemini-1.5-flash"]'
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{secrets.GEMINI_API_KEY}}
-          # Automatino Settings
+          # Automation Settings
           github_action_config.auto_review: "true"
           github_action_config.auto_describe: "true"
           github_action_config.auto_improve: "true"
