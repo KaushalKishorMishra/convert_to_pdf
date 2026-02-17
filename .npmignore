@@ -1,0 +1,9 @@
+tests/
+data/
+.gitignore
+.git/
+SERVER_SETUP.md
+scripts/check-env.js
+scripts/cleanup-libreoffice.sh
+scripts/install.sh
+bun.lock
