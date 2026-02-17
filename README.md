@@ -1,198 +1,132 @@
-# Office Document to PDF Converter
+# Office Document Converter
 
-A Node.js application that converts Office documents (.doc, .docx, .ppt, .pptx) to PDF format using unoconv.
+A robust, production-ready Node.js library and CLI tool to convert Office documents (.doc, .docx, .ppt, .pptx, .xls, .xlsx, .odt, etc.) to PDF and other formats using `unoconv` (LibreOffice).
 
 ## Features
 
-- Converts Word documents (.doc, .docx) to PDF
-- Converts PowerPoint presentations (.ppt, .pptx) to PDF
-- Batch processing of multiple files
-- Preserves original files after conversion
-- Colored console output for better readability
-- Robust error handling
+- **Format Support**: Converts Word, PowerPoint, Excel, and OpenDocument formats.
+- **Output Formats**: Supports PDF, HTML, JPG, PNG, TXT, and more.
+- **Batch Processing**: Convert entire directories at once.
+- **CLI Interface**: Easy-to-use command-line tool.
+- **Programmatic API**: Clean Node.js API for integration into your applications.
+- **Events**: Event-driven API for progress tracking.
+- **Robust**: Handles errors gracefully and supports debug logging.
 
-## Prerequisites (Manual Setup)
+## Prerequisites
 
-### unoconv Installation
+This tool requires `unoconv` (which depends on LibreOffice) to be installed on your system.
 
-This application requires unoconv to be installed on your system. unoconv uses LibreOffice to perform the conversions.
-
-#### Debian/Ubuntu
+### Linux (Debian/Ubuntu)
 ```bash
 sudo apt install unoconv
 ```
 
-#### Arch Linux
-```bash
-sudo pacman -S unoconv
-```
-
-#### Fedora/RHEL/CentOS
-```bash
-sudo yum install unoconv
-```
-or
-```bash
-sudo dnf install unoconv
-```
-
-#### macOS
+### macOS
 ```bash
 brew install unoconv
 ```
 
-### Node.js
-
-Requires Node.js version 14.0.0 or higher.
+### Windows
+You need to install LibreOffice and the unoconv python script manually, or run via WSL.
 
 ## Installation
 
-### Automated Installation (Recommended for Linux/macOS)
+```bash
+npm install convert-to-pdf
+```
 
-Run the included install script to automatically set up Node.js, LibreOffice, and project dependencies:
+## CLI Usage
+
+The package includes a CLI tool `convert-to-pdf`.
 
 ```bash
-npm run setup
+# Convert a single file to PDF
+convert-to-pdf convert document.docx
+
+# Convert all files in a directory to PDF
+convert-to-pdf convert ./input-files
+
+# Specify output directory
+convert-to-pdf convert document.docx -o ./output
+
+# Convert to a different format (e.g., jpg)
+convert-to-pdf convert presentation.pptx -f jpg
+
+# Debug mode
+convert-to-pdf convert document.docx --debug
 ```
 
-### Manual Installation
+## Programmatic API
 
-1. Install Prerequisites (Node.js and LibreOffice) as detailed below.
+### Basic Usage
 
-2. Clone or download this repository
+```javascript
+const { Converter } = require('convert-to-pdf');
 
-3. Install npm dependencies:
-```bash
-npm install
+const converter = new Converter({
+  outputDir: './output',
+  outputFormat: 'pdf'
+});
+
+(async () => {
+  try {
+    const outputPath = await converter.convertFile('./input/document.docx');
+    console.log(`Converted to: ${outputPath}`);
+  } catch (err) {
+    console.error(err);
+  }
+})();
 ```
 
-4. Verify your environment:
-```bash
-npm run check-env
+### Batch Conversion with Events
+
+```javascript
+const { Converter, Scanner } = require('convert-to-pdf');
+
+const converter = new Converter();
+const scanner = new Scanner();
+
+converter.on('start', (data) => console.log(`Starting: ${data.file}`));
+converter.on('success', (data) => console.log(`Finished: ${data.output}`));
+converter.on('error', (data) => console.error(`Error: ${data.error}`));
+
+(async () => {
+  const files = await scanner.scan('./input');
+  const filePaths = files.map(f => f.fullPath);
+  
+  const results = await converter.convertFiles(filePaths);
+  console.log('Batch complete:', results);
+})();
 ```
 
-## Prerequisites (Manual Setup)
+### Low-level Access
 
-## Usage
+```javascript
+const { Unoconv } = require('convert-to-pdf');
 
-1. Place your Office documents (.doc, .docx, .ppt, .pptx) in the `data/input/` directory
-
-2. Run the converter:
-```bash
-npm start
+const unoconv = new Unoconv();
+const buffer = await fs.readFile('doc.docx');
+const pdfBuffer = await unoconv.convert(buffer, 'pdf', 'doc.docx');
 ```
 
-3. Find the converted PDF files in the `data/output/` directory
+## Configuration
 
-## Project Structure
+### Converter Options
 
-```
-convert-to-pdf/
-├── converters/
-│   └── documentConverter.js    # unoconv conversion logic
-├── utils/
-│   ├── fileScanner.js          # File scanning utilities
-│   └── logger.js               # Colored console logging
-├── data/
-│   ├── input/                  # Place your files here
-│   └── output/                 # PDFs will be saved here
-├── index.js                    # Main application entry point
-├── package.json                # Project dependencies
-└── README.md                   # This file
-```
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `outputDir` | string | `./output` | Directory to save converted files |
+| `outputFormat` | string | `pdf` | Target format (pdf, jpg, html, etc.) |
+| `binaryPath` | string | `unoconv` | Path to unoconv binary |
+| `debug` | boolean | `false` | Enable verbose logging |
 
-## Supported Formats
+### Scanner Options
 
-| Input Format | Description | Extension |
-|--------------|-------------|-----------|
-| Word Document (legacy) | Microsoft Word 97-2003 | .doc |
-| Word Document | Microsoft Word 2007+ | .docx |
-| PowerPoint Presentation (legacy) | Microsoft PowerPoint 97-2003 | .ppt |
-| PowerPoint Presentation | Microsoft PowerPoint 2007+ | .pptx |
-
-## How It Works
-
-1. **Checks** if unoconv is installed on your system
-2. **Scans** the `data/input/` directory for supported file formats
-3. **Converts** each file to PDF using unoconv
-4. **Saves** the PDF files to `data/output/` with the same filename
-5. **Keeps** original files in place (does not delete them)
-
-## Example Output
-
-```
-📄 Office Document to PDF Converter
-
-ℹ Checking unoconv installation...
-✓ unoconv found at: /usr/bin/unoconv
-
-ℹ Scanning input directory...
-✓ Found 3 files to convert
-
-Converting documents to PDF...
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-✓ report.docx → report.pdf
-✓ presentation.pptx → presentation.pdf
-✓ meeting-notes.doc → meeting-notes.pdf
-
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-Summary:
-  Total: 3 files
-  Success: 3 files
-━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
-
-✓ Conversion complete! Check data/output/ for PDFs.
-```
-
-## Troubleshooting
-
-### unoconv Not Found
-
-If you get an error about unoconv not being found:
-
-1. Make sure unoconv is installed (see installation instructions above)
-2. Verify it's in your system PATH by running:
-   ```bash
-   which unoconv    # Linux/macOS
-   where unoconv    # Windows
-   ```
-3. Restart your terminal/command prompt after installation
-
-### Conversion Failures
-
-If a specific file fails to convert:
-
-- **Password-protected files**: Cannot be converted (not supported)
-- **Corrupted files**: Check if the file opens correctly in Microsoft Office or LibreOffice
-- **Unsupported format**: Ensure the file has a supported extension (.doc, .docx, .ppt, .pptx)
-- **File permissions**: Ensure you have read access to the input file
-
-### Permission Errors
-
-If you get permission errors:
-
-```bash
-# Make sure the directories are writable
-chmod -R 755 data/
-```
-
-## Limitations
-
-- Password-protected documents cannot be converted
-- Macros and embedded scripts will not be preserved
-- Some complex formatting may have minor differences from the original
-- Animations in PowerPoint files are not preserved in PDF
-
-## Dependencies
-
-- **unoconv** - System dependency
-- **fs-extra** - Enhanced file system operations
-- **chalk** - Colored terminal output
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `extensions` | string[] | `['.doc', ...]` | List of supported extensions |
+| `recursive` | boolean | `false` | Scan subdirectories |
 
 ## License
 
 MIT
-
-## Contributing
-
-Feel free to submit issues and enhancement requests!
