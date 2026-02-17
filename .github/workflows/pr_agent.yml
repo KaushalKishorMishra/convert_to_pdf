@@ -24,8 +24,8 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           # Modle Configuration
-          config.model: "gemini/gemini-3-flash-preview"
-          config.fallback_modes: '["gemini/gemini-3-flash-preview"]'
+          config.model: "gemini/gemini-1.5-flash"
+          config.fallback_modes: '["gemini/gemini-1.5-flash"]'
           GOOGLE_AI_STUDIO.GEMINI_API_KEY: ${{secrets.GEMINI_API_KEY}}
           # Automatino Settings
           github_action_config.auto_review: "true"
