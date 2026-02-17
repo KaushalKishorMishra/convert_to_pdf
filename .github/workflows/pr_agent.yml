@@ -15,7 +15,7 @@ jobs:
       - name: PR Agent Action
         uses: qodo-ai/pr-agent@main
         env:
-          GITHUB_TOKEN: ${{secrets.TOKEN}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           # Modle Configuration
           config.model: "gemini/gemini-3-flash-preview"
           config.fallback_modes: '["gemini/gemini-1.5-flash"]'
